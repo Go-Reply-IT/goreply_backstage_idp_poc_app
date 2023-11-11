@@ -23,6 +23,14 @@ spec:
           ui:autofocus: true
           ui:options:
             rows: 5
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: [Group, User]
     - title: Choose a location
       required:
         - repoUrl
@@ -46,6 +54,8 @@ spec:
         url: ./content
         values:
           name: ${{ parameters.name }}
+          owner: ${{ parameters.owner }}
+
 
     # This step publishes the contents of the working directory to GitHub.
     - id: publish
