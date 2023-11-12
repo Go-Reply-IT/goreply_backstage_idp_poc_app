@@ -25,6 +25,7 @@
     "@backstage/plugin-auth-backend": "^0.19.3",
     "@backstage/plugin-auth-node": "^0.4.0",
     "@backstage/plugin-catalog-backend": "^1.14.0",
+    "@backstage/plugin-catalog-backend-module-github": "^0.4.4",
     "@backstage/plugin-permission-common": "^0.7.9",
     "@backstage/plugin-permission-node": "^0.7.17",
     "@backstage/plugin-proxy-backend": "^0.4.3",
@@ -38,6 +39,7 @@
     "dockerode": "^3.3.1",
     "express": "^4.17.1",
     "express-promise-router": "^4.1.0",
+    "jira-client": "^8.2.2",
     "pg": "^8.3.0",
     "winston": "^3.2.1"
   },
@@ -46,6 +48,7 @@
     "@types/dockerode": "^3.3.0",
     "@types/express": "^4.17.6",
     "@types/express-serve-static-core": "^4.17.5",
+    "@types/jira-client": "^7.1.9",
     "@types/luxon": "^2.0.4"
   },
   "files": [

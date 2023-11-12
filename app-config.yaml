@@ -32,6 +32,10 @@ backend:
     connection: ':memory:'
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
+atlassian:
+  username: s.fasano@goreply.io
+  token: ${ATLASSIAN_API_TOKEN}
+
 integrations:
   github:
     - host: github.com
@@ -62,6 +66,9 @@ techdocs:
   publisher:
     type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
 
+costInsights:
+  engineerCost: 200000
+
 auth:
   environment: development
   # see https://backstage.io/docs/auth/ to learn about auth providers
@@ -79,17 +86,37 @@ catalog:
     entityFilename: catalog-info.yaml
     pullRequestBranchName: backstage-integration
   rules:
-    - allow: [Component, System, API, Resource, Location]
+    - allow: [Component, System, API, Resource, Location, Template, User]
+  providers:
+    github:
+      # the provider ID can be any camelCase string
+      templateProvider:
+        organization: 'Go-Reply-IT' # string
+        catalogPath: '/*/template.yaml' # string
+        filters:
+          branch: 'main' # string
+          repository: '.*' # Regex
+      usersProvider:
+        organization: 'Go-Reply-IT' # string
+        catalogPath: '/*/users.yaml' # string
+        filters:
+          branch: 'main' # string
+          repository: '.*' # Regex
   locations:
     # Local example data, file locations are relative to the backend process, typically `packages/backend`
-    - type: file
-      target: ../../examples/entities.yaml
+    # - type: file
+    #   target: ../../examples/entities.yaml
 
-    # Local example template
-    - type: file
-      target: ../../examples/template/template.yaml
-      rules:
-        - allow: [Template]
+    # # Local example template
+    # - type: file
+    #   target: ../../examples/template/template.yaml
+    #   rules:
+    #     - allow: [Template]
+
+    # - type: url
+    #   target: https://github.com/Go-Reply-IT/goreply_backstage_idp_poc_templates
+    #   rules:
+    #     - allow: [Template]
 
     # Local example organizational data
     - type: file
