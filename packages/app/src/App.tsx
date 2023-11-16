@@ -18,6 +18,7 @@ import {
   TechDocsIndexPage,
   techdocsPlugin,
   TechDocsReaderPage,
+  DefaultTechDocsHome
 } from '@backstage/plugin-techdocs';
 import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
@@ -35,6 +36,9 @@ import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
 import { githubAuthApiRef } from '@backstage/core-plugin-api';
 import { SignInPage } from '@backstage/core-components';
+import { goTheme } from './theme/goreply';
+import { UnifiedThemeProvider, themes } from '@backstage/theme';
+import { CssBaseline } from '@material-ui/core';
 
 const app = createApp({
   // components: {
@@ -69,6 +73,35 @@ const app = createApp({
       catalogIndex: catalogPlugin.routes.catalogIndex,
     });
   },
+  themes: [
+    // {
+    //   id: 'light',
+    //   title: 'Light',
+    //   variant: 'light',
+    //   Provider: ({ children }) => (
+    //     <UnifiedThemeProvider theme={themes.light} children={children} />
+    //   ),
+    // },
+    // {
+    //   id: 'dark',
+    //   title: 'Dark',
+    //   variant: 'dark',
+    //   Provider: ({ children }) => (
+    //     <UnifiedThemeProvider theme={themes.dark} children={children} />
+    //   ),
+    // },
+    {
+      id: 'goreply',
+      title: 'GoReply',
+      variant: 'light',
+      Provider: ({ children }) => (
+        <UnifiedThemeProvider theme={goTheme} noCssBaseline>
+          <CssBaseline />
+          {children}
+        </UnifiedThemeProvider>
+      ),
+    },
+  ],
 });
 
 const routes = (
@@ -81,7 +114,9 @@ const routes = (
     >
       {entityPage}
     </Route>
-    <Route path="/docs" element={<TechDocsIndexPage />} />
+    <Route path="/docs" element={<TechDocsIndexPage />}>
+      <DefaultTechDocsHome />
+    </Route>
     <Route
       path="/docs/:namespace/:kind/:name/*"
       element={<TechDocsReaderPage />}
