@@ -3,7 +3,8 @@ import { createRouter, createBuiltinActions } from '@backstage/plugin-scaffolder
 import { Router } from 'express';
 import type { PluginEnvironment } from '../types';
 import { ScmIntegrations } from '@backstage/integration';
-import { createNewJiraTicketAction } from './scaffolder/actions/jira';
+import { createNewJiraTicketAction } from './scaffolder/actions/create-jira-ticket';
+import { createNewJiraProjectAction } from './scaffolder/actions/create-jira-project';
 
 
 export default async function createPlugin(
@@ -21,7 +22,7 @@ export default async function createPlugin(
     reader: env.reader,
   });
 
-  const actions = [...builtInActions, createNewJiraTicketAction()];
+  const actions = [...builtInActions, createNewJiraTicketAction(), createNewJiraProjectAction()];
 
   return await createRouter({
     actions,

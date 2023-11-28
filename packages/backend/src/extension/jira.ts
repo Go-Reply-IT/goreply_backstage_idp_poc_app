@@ -7,7 +7,7 @@ function initializeJira(config: Config): JiraApi {
   if(!jiraInstance){
     jiraInstance = new JiraApi({
       protocol: 'https',
-      host: 'goreply.atlassian.net',
+      host: 'my-idp.atlassian.net',
       username: config.get("atlassian.username"),
       password: config.get("atlassian.token"),
       apiVersion: '2',

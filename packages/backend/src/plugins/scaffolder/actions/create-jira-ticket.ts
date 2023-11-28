@@ -30,7 +30,8 @@ export const createNewJiraTicketAction = () => {
         return
       }
 
-      ctx.input.type = ctx.input.type == undefined ? "10563" : ctx.input.type
+      ctx.input.type = ctx.input.type == undefined ? "10025" : ctx.input.type
+      // ctx.input.type = ctx.input.type == undefined ? "10563" : ctx.input.type
 
       ctx.logger.log("info", "I am declaring the task in Jira.")
 
