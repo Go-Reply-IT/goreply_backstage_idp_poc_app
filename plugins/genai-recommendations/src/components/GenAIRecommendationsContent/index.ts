@@ -1,0 +1,1 @@
+export { GenAIRecommendationsContent } from './GenAIRecommendationsContent'

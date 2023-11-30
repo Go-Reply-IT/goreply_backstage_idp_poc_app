@@ -268,6 +268,11 @@ const createCustomThemeOverrides = (
         textTransform: 'none',
       },
     },
+    MuiAccordionDetails: {
+      root: {
+        flexDirection: 'column'
+      }
+    }
   };
 };
 
