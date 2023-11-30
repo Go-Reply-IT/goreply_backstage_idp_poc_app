@@ -59,6 +59,7 @@ import {
 import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 import { GenAIRecommendationsContent } from '@internal/plugin-genai-recommendations';
+import { EntityTechInsightsScorecardContent } from '@backstage/plugin-tech-insights';
 
 const techdocsContent = (
   <EntityTechdocsContent>
@@ -180,6 +181,13 @@ const serviceEntityPage = (
 
     <EntityLayout.Route path="/adrs" title="ADRs">
       <EntityAdrContent />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/tech-insights" title="Scorecards">
+      <EntityTechInsightsScorecardContent
+        title="Customized title for the scorecard"
+        description="Small description about scorecards"
+      />
     </EntityLayout.Route>
 
     <EntityLayout.Route path="/genai-recommendations" title="GenAI Recommendations">

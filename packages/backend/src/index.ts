@@ -33,6 +33,7 @@ import { PluginEnvironment } from './types';
 import { ServerPermissionClient } from '@backstage/plugin-permission-node';
 import { DefaultIdentityClient } from '@backstage/plugin-auth-node';
 import { initializeJira } from './extension/jira';
+import techInsights from './plugins/techInsights';
 
 function makeCreateEnv(config: Config) {
   const root = getRootLogger();
@@ -91,6 +92,7 @@ async function main() {
   const searchEnv = useHotMemoize(module, () => createEnv('search'));
   const appEnv = useHotMemoize(module, () => createEnv('app'));
   const adrEnv = useHotMemoize(module, () => createEnv('adr'));
+  const techInsightsEnv = useHotMemoize(module, () => createEnv('tech_insights'));
 
   const apiRouter = Router();
   apiRouter.use('/catalog', await catalog(catalogEnv));
@@ -100,6 +102,8 @@ async function main() {
   apiRouter.use('/proxy', await proxy(proxyEnv));
   apiRouter.use('/search', await search(searchEnv));
   apiRouter.use('/adr', await adr(adrEnv));
+  apiRouter.use('/tech-insights', await techInsights(techInsightsEnv));
+  apiRouter.use('/proxy', await proxy(proxyEnv));
 
   // Add backends ABOVE this line; this 404 handler is the catch-all fallback
   apiRouter.use(notFoundHandler());
@@ -107,6 +111,7 @@ async function main() {
   const service = createServiceBuilder(module)
     .loadConfig(config)
     .addRouter('/api', apiRouter)
+    .addRouter('/proxy', await proxy(proxyEnv))
     .addRouter('', await app(appEnv));
 
   await service.start().catch(err => {

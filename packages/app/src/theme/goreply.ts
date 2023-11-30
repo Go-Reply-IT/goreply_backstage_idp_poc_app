@@ -272,6 +272,12 @@ const createCustomThemeOverrides = (
       root: {
         flexDirection: 'column'
       }
+    },
+    MuiAccordionSummary: {
+      content: {
+        justifyContent: "space-between",
+        alignItems: "center"
+      }
     }
   };
 };
