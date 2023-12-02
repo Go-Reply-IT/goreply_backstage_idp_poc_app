@@ -1,1 +1,1 @@
-export { GenAIRecommendationsContent } from './GenAIRecommendationsContent'
+export { GenAIRecommendationsTestContent } from './GenAIRecommendationsContent'

@@ -34,6 +34,7 @@ import { ServerPermissionClient } from '@backstage/plugin-permission-node';
 import { DefaultIdentityClient } from '@backstage/plugin-auth-node';
 import { initializeJira } from './extension/jira';
 import techInsights from './plugins/techInsights';
+import genAIRecommendations from './plugins/genai-recommendations'
 
 function makeCreateEnv(config: Config) {
   const root = getRootLogger();
@@ -93,6 +94,8 @@ async function main() {
   const appEnv = useHotMemoize(module, () => createEnv('app'));
   const adrEnv = useHotMemoize(module, () => createEnv('adr'));
   const techInsightsEnv = useHotMemoize(module, () => createEnv('tech_insights'));
+  const genAIRecommendationsEnv = useHotMemoize(module, () => createEnv('genai_recommendations'));
+
 
   const apiRouter = Router();
   apiRouter.use('/catalog', await catalog(catalogEnv));
@@ -103,7 +106,8 @@ async function main() {
   apiRouter.use('/search', await search(searchEnv));
   apiRouter.use('/adr', await adr(adrEnv));
   apiRouter.use('/tech-insights', await techInsights(techInsightsEnv));
-  apiRouter.use('/proxy', await proxy(proxyEnv));
+  apiRouter.use('/genai', await genAIRecommendations(genAIRecommendationsEnv));
+  // apiRouter.use('/proxy', await proxy(proxyEnv));
 
   // Add backends ABOVE this line; this 404 handler is the catch-all fallback
   apiRouter.use(notFoundHandler());

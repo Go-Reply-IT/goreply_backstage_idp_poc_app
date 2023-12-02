@@ -1,31 +1,36 @@
-import React, { PropsWithChildren, useState } from 'react';
-import { Typography, Grid, Accordion, AccordionSummary, AccordionDetails, Button, Stack, AppBar, Tabs, Tab } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Typography, Grid, Accordion, AccordionSummary, AccordionDetails, Button} from '@material-ui/core';
 import {
-  InfoCard,
-  Header,
-  Page,
   Content,
   ContentHeader,
-  HeaderLabel,
-  SupportButton,
-  TabbedLayout,
 } from '@backstage/core-components';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import CachedIcon from '@material-ui/icons/Cached';
-import { CopyBlock, tomorrowNightBlue } from 'react-code-blocks';
 import {
   useEntity
 } from '@backstage/plugin-catalog-react';
 import useAsync from 'react-use/lib/useAsync';
-import { Table, TableColumn, Progress, ResponseErrorPanel } from '@backstage/core-components';
-import { TabContext, TabPanel } from '@material-ui/lab';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { Progress } from '@backstage/core-components';
+import CodeMirror from '@uiw/react-codemirror';
+import { tomorrowNightBlue } from "@uiw/codemirror-theme-tomorrow-night-blue";
+import { javascript } from '@codemirror/lang-javascript';
+import {
+  DiscoveryApi,
+  FetchApi,
+  IdentityApi,
+  useApi,
+} from '@backstage/core-plugin-api';
+import { genAIApiRef } from '../../../api';
 
-export const GenAIRecommendationsContent = () => {
+export const GenAIRecommendationsTestContent = () => {
   const {entity} = useEntity()
+  const genAIApi = useApi(genAIApiRef);
+  // const backendUrl = config.getString('backend.baseUrl')
   const [recommendations, setRecommendations] = useState<any[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<any>({})
+
+  const extensions = [javascript({typescript: true})];
 
   async function loadGenAIRecommendations () {
     try {
@@ -50,8 +55,43 @@ export const GenAIRecommendationsContent = () => {
     }
   }
 
+  async function addTest(test) {
+    try {
+      // const responseRaw = await fetch('/api/proxy/genai-recommendations/unit_test', {
+      // setLoading(true)
+      // const responseRaw = await fetch('http://localhost:7007/api/genai/health', {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   // body: JSON.stringify({
+      //   //   url: entity.metadata.annotations && entity.metadata.annotations["github.com/project-slug"] ? `https://github.com/${entity.metadata.annotations["github.com/project-slug"]}` : ""
+      //   // })
+      // })
+
+      // const response = await responseRaw.json()
+      console.log(entity)
+      const response = await genAIApi.pushNewTest({
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          entityRef: `${entity.kind}:${entity.metadata.namespace}/${entity.metadata.name}`,
+          path: test.path,
+          code: test.code
+        })
+      })
+      console.log(response)
+
+      // setRecommendations(response)
+      // setLoading(false)
+    } catch {
+      // setRecommendations([])
+    }
+  }
+
   if (loading) return <Progress />
-  // else if (error) return <ResponseErrorPanel error={error} />
 
   return (
     <Content>
@@ -59,6 +99,9 @@ export const GenAIRecommendationsContent = () => {
         <Button variant="contained" color="primary" startIcon={<CachedIcon />} onClick={loadGenAIRecommendations}>
           Reload
         </Button>
+        <Button variant="contained" color="primary" >
+                    Accept
+                  </Button>
       </ContentHeader >
       <Grid container spacing={3} direction="column">
         {recommendations.map((test, i) => (
@@ -71,7 +114,7 @@ export const GenAIRecommendationsContent = () => {
               <Typography variant='button'>New Unit Test: {test.path}</Typography>
               <Grid container direction="row-reverse" spacing={2}>
                 <Grid item>
-                  <Button variant="contained" color="primary">
+                  <Button variant="contained" color="primary" onClick={() => addTest(test)}>
                     Accept
                   </Button>
                 </Grid>
@@ -86,23 +129,11 @@ export const GenAIRecommendationsContent = () => {
               <Grid container direction="row">
                 <Grid item md={6}>
                   <Typography>Original</Typography>
-                  <CopyBlock
-                    text={test.original}
-                    language={"typescript"}
-                    showLineNumbers={true}
-                    theme={tomorrowNightBlue}
-                    codeBlock
-                  />
+                  <CodeMirror value={test.original} theme={tomorrowNightBlue} extensions={extensions} editable={false} />
                 </Grid>
                 <Grid item md={6}>
                   <Typography>Test</Typography>
-                  <CopyBlock
-                    text={test.code}
-                    language={"typescript"}
-                    showLineNumbers={true}
-                    theme={tomorrowNightBlue}
-                    codeBlock
-                  />
+                  <CodeMirror value={test.code} theme={tomorrowNightBlue} extensions={extensions}/>
                 </Grid>
               </Grid>
             </AccordionDetails>

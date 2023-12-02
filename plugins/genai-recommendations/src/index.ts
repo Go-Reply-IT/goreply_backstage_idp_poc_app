@@ -1,1 +1,1 @@
-export { genaiRecommendationsPlugin, GenAIRecommendationsContent } from './plugin';
+export { genaiRecommendationsPlugin, GenAIRecommendationsTestContent } from './plugin';

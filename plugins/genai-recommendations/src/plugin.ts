@@ -1,19 +1,31 @@
-import { createPlugin, createRoutableExtension } from '@backstage/core-plugin-api';
-
+import { createApiFactory,discoveryApiRef, fetchApiRef,createPlugin, createRoutableExtension } from '@backstage/core-plugin-api';
 import { rootRouteRef } from './routes';
+import {GenAIClient, genAIApiRef} from '../api'
 
 export const genaiRecommendationsPlugin = createPlugin({
   id: 'genai-recommendations',
+  apis: [
+    createApiFactory({
+      api: genAIApiRef,
+      deps: {
+        discoveryApi: discoveryApiRef,
+        fetchApi: fetchApiRef,
+      },
+      factory({ discoveryApi, fetchApi }) {
+        return new GenAIClient({ discoveryApi, fetchApi });
+      },
+    }),
+  ],
   routes: {
     root: rootRouteRef,
   },
 });
 
-export const GenAIRecommendationsContent = genaiRecommendationsPlugin.provide(
+export const GenAIRecommendationsTestContent = genaiRecommendationsPlugin.provide(
   createRoutableExtension({
-    name: 'GenAIRecommendationsContent',
+    name: 'GenAIRecommendationsTestContent',
     component: () =>
-      import('./components/GenAIRecommendationsContent').then(m => m.GenAIRecommendationsContent),
+      import('./components/GenAIRecommendationsContent').then(m => m.GenAIRecommendationsTestContent),
     mountPoint: rootRouteRef,
   }),
 );

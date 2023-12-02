@@ -58,7 +58,7 @@ import {
 
 import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
-import { GenAIRecommendationsContent } from '@internal/plugin-genai-recommendations';
+import { GenAIRecommendationsTestContent } from '@internal/plugin-genai-recommendations';
 import { EntityTechInsightsScorecardContent } from '@backstage/plugin-tech-insights';
 
 const techdocsContent = (
@@ -191,7 +191,7 @@ const serviceEntityPage = (
     </EntityLayout.Route>
 
     <EntityLayout.Route path="/genai-recommendations" title="GenAI Recommendations">
-      <GenAIRecommendationsContent />
+      <GenAIRecommendationsTestContent />
     </EntityLayout.Route>
   </EntityLayout>
 );
