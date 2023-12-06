@@ -9,15 +9,12 @@ import CachedIcon from '@material-ui/icons/Cached';
 import {
   useEntity
 } from '@backstage/plugin-catalog-react';
-import useAsync from 'react-use/lib/useAsync';
+import { useAsyncFn } from 'react-use';
 import { Progress } from '@backstage/core-components';
 import CodeMirror from '@uiw/react-codemirror';
 import { tomorrowNightBlue } from "@uiw/codemirror-theme-tomorrow-night-blue";
 import { javascript } from '@codemirror/lang-javascript';
 import {
-  DiscoveryApi,
-  FetchApi,
-  IdentityApi,
   useApi,
 } from '@backstage/core-plugin-api';
 import { genAIApiRef } from '../../../api';
@@ -25,52 +22,24 @@ import { genAIApiRef } from '../../../api';
 export const GenAIRecommendationsTestContent = () => {
   const {entity} = useEntity()
   const genAIApi = useApi(genAIApiRef);
-  // const backendUrl = config.getString('backend.baseUrl')
-  const [recommendations, setRecommendations] = useState<any[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<any>({})
+  const [{value: recommendations, loading, error}, listRecommendationsFn] = useAsyncFn(async () => {
+    const response = await fetch('http://localhost:7007/api/proxy/genai-recommendations/unit_test', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        url: entity.metadata.annotations && entity.metadata.annotations["github.com/project-slug"] ? `https://github.com/${entity.metadata.annotations["github.com/project-slug"]}` : ""
+      })
+    })
+    const result = await response.json()
+    return result
+  }, [], {loading: false, error: undefined, value: []});
 
   const extensions = [javascript({typescript: true})];
 
-  async function loadGenAIRecommendations () {
-    try {
-      // const responseRaw = await fetch('/api/proxy/genai-recommendations/unit_test', {
-      setLoading(true)
-      const responseRaw = await fetch('http://localhost:7007/api/proxy/genai-recommendations/unit_test', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          url: entity.metadata.annotations && entity.metadata.annotations["github.com/project-slug"] ? `https://github.com/${entity.metadata.annotations["github.com/project-slug"]}` : ""
-        })
-      })
-
-      const response = await responseRaw.json()
-
-      setRecommendations(response)
-      setLoading(false)
-    } catch {
-      setRecommendations([])
-    }
-  }
-
   async function addTest(test) {
     try {
-      // const responseRaw = await fetch('/api/proxy/genai-recommendations/unit_test', {
-      // setLoading(true)
-      // const responseRaw = await fetch('http://localhost:7007/api/genai/health', {
-      //   method: 'GET',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   // body: JSON.stringify({
-      //   //   url: entity.metadata.annotations && entity.metadata.annotations["github.com/project-slug"] ? `https://github.com/${entity.metadata.annotations["github.com/project-slug"]}` : ""
-      //   // })
-      // })
-
-      // const response = await responseRaw.json()
-      console.log(entity)
       const response = await genAIApi.pushNewTest({
         method: "POST",
         headers: {
@@ -83,9 +52,6 @@ export const GenAIRecommendationsTestContent = () => {
         })
       })
       console.log(response)
-
-      // setRecommendations(response)
-      // setLoading(false)
     } catch {
       // setRecommendations([])
     }
@@ -96,12 +62,9 @@ export const GenAIRecommendationsTestContent = () => {
   return (
     <Content>
       <ContentHeader title={recommendations.length === 0 ? `Load new GenAI Recommendations` : `You have ${recommendations.length} GenAI Recommedations`}>
-        <Button variant="contained" color="primary" startIcon={<CachedIcon />} onClick={loadGenAIRecommendations}>
+        <Button variant="contained" color="primary" startIcon={<CachedIcon />} onClick={listRecommendationsFn}>
           Reload
         </Button>
-        <Button variant="contained" color="primary" >
-                    Accept
-                  </Button>
       </ContentHeader >
       <Grid container spacing={3} direction="column">
         {recommendations.map((test, i) => (
