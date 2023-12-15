@@ -170,7 +170,7 @@ const createCustomThemeOverrides = (
     },
     MuiAlert: {
       root: {
-        borderRadius: 0,
+        borderRadius: 3,
       },
       standardError: {
         color: '#FFFFFF',

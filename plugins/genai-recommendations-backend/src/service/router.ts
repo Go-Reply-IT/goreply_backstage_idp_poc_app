@@ -42,7 +42,7 @@ export async function createRouter(
     const git = Git.fromAuth({password: githubToken, token: githubToken, logger})
     const repoUrl = `https://${githubToken}@github.com/${entity?.metadata.annotations!["github.com/project-slug"]}`
     const dir = entity?.metadata.annotations!["github.com/project-slug"]!
-    const testPath = body.path.replace("repo/backstage/", "./").replace(".ts", ".test.ts")
+    const testPath = "."+body.path.replace("repo/backstage/", "./").replace(".ts", ".test.ts")
     console.log(path.join(dir, testPath))
     console.log(repoUrl)
     console.log(dir)
@@ -79,14 +79,14 @@ export async function createRouter(
     })
     console.log(push)
     await fs.rm(dir, {recursive: true, force: true})
-    await octokit.rest.pulls.create({
+    const pr = await octokit.rest.pulls.create({
       owner: dir.split('/')[0],
       repo: dir.split('/')[1],
       head: "test/addTests",
       base: "main",
       title: "test: add test file"
     });
-    res.json({ status: 'ok', push});
+    res.json({ status: 'ok', pr});
   })
 
   router.get('/health', async (req, res) => {
